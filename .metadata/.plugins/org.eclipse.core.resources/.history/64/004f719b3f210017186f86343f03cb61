@@ -1,0 +1,57 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+
+public class Matrix {
+	
+	public double[][] content;
+	int N;
+	
+	public Matrix(int N){
+		this.N=N;
+		content = new double[N][N];
+	}
+	
+	public void fillMatrixFile(Scanner source){
+		
+		for(int i=0;i<N;i++){
+			for(int j=0;j<N;j++){
+				content[i][j] = source.nextDouble();
+			}
+		}
+	}
+	
+	public void printMatrix(){
+		for(int i=0;i<N;i++){
+			for(int j=0;j<N;j++){
+				System.out.print(content[i][j]+"  ");
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void main(String args[]){
+		Scanner file = null;
+		try {
+			file = new Scanner(new File("matrix.txt"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		int N = 5;
+		
+		Matrix M = new Matrix(N);
+		M.fillMatrixFile(file);
+		System.out.println("MATRIX 1");
+		M.printMatrix();
+		
+		System.out.println("MATRIX 2");
+		Matrix M2 = new Matrix(N);
+		M2.fillMatrixFile(file);
+		M2.printMatrix();
+	}
+	
+}

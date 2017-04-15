@@ -1,0 +1,53 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+import java.util.concurrent.*;
+
+
+public class MatrixMultiply {
+	  private static int NTHREADS = 10;
+	  private static int N = 5;
+	  private static String fileName="matrix.txt";
+	  private static int nMatrix=2;
+	  
+	  public static void main(String args[]) throws InterruptedException, ExecutionException{
+		ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
+		Scanner scanner=null;
+		Matrix Matrices[] = new Matrix[nMatrix];
+		Matrix result = new Matrix(N);
+		ArrayList<Future<Double>> futureResult = new ArrayList<Future<Double>>();
+		
+		try {
+			scanner = new Scanner(new File(fileName));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  
+		  for(int i=0;i<nMatrix;i++){
+			  Matrices[i] = new Matrix(N);
+			  Matrices[i].fillMatrixFile(scanner);
+		  }
+		  
+		  for(int k=0;k<nMatrix-1; k++){
+			  for(int i=0;i<N;i++){
+				  for(int j=0;j<N;j++){
+					  System.out.println(Matrices[k].content[i][j]);
+					  Callable<Double> worker = new MatrixCallable(
+							  Matrices[k].content[i],Matrices[k+1].getColumn(j),N);
+					  
+					  futureResult.add(executor.submit(worker));
+				  }
+			  }
+			  
+			  for(int i=0;i<N;i++){
+				  for(int j=0;j<N;j++){
+					  result.content[i][j] = futureResult.get(N*i+j).get(); 
+				  }
+			  }
+		  }
+		  
+		  result.printMatrix();
+		  
+	  }
+}
