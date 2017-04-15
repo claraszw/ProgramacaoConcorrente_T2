@@ -1,17 +1,27 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.*;
 
 
 public class MatrixMultiply {
-	  private static int NTHREADS = 10;
-	  private static int N = 5;
-	  private static String fileName="matrix.txt";
-	  private static int nMatrix=10;
+	  private static int M; // numero máximo de threads
+	  private static int N;
+	  private static String fileName;
+	  private static int nMatrix;
 	  
 	  public static void main(String args[]) throws InterruptedException, ExecutionException{
-		ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
+		
+		 /*Set Program Variables*/
+		fileName = args[0];
+		N = Integer.parseInt(args[1]);
+//		M = Integer.parseInt(args[2]);
+		M = 10;
+		nMatrix = Integer.parseInt(args[3]);
+		
+		  
+		ExecutorService executor = Executors.newFixedThreadPool(M);
 		Scanner scanner=null;
 		Matrix Matrices[] = new Matrix[nMatrix];
 		Matrix result = new Matrix(N);
@@ -26,10 +36,18 @@ public class MatrixMultiply {
 		
 		long startTime = System.currentTimeMillis();
 		  
+		
+		// Read all matrices into a array
+		
 		  for(int i=0;i<nMatrix;i++){
 			  Matrices[i] = new Matrix(N);
 			  Matrices[i].fillMatrixFile(scanner);
 		  }
+		  
+		/*
+		 * Calculates the product of first two matrices.
+		 * Submit a job for each row * column and puts the future result in a list.
+		 * */
 		  
 		  for(int i=0;i<N;i++){
 			  for(int j=0;j<N;j++){
@@ -40,12 +58,22 @@ public class MatrixMultiply {
 			  }
 		  }
 		  
+		/*
+		 * Waits for the computations of the whole result matrix
+		 * */
+		  
 		  for(int i=0;i<N;i++){
 			  for(int j=0;j<N;j++){
 				  result.content[i][j] = futureResult.get(N*i+j).get(); 
 			  }
 		  }
 		  
+		/*
+		 * Calculates the product of the result matrix with the next matrix
+		 * until the last matrix. Always waits for the whole result to be ready to 
+		 * start the next computation.
+		 * 
+		 * */
 		  for(int k=2;k<nMatrix; k++){
 			  
 			  futureResult.clear();
@@ -78,11 +106,20 @@ public class MatrixMultiply {
 		  
 		  result.printMatrix();
 		  
+		  try {
+			result.printMatrixFile(new PrintWriter(new File("resultado.txt")));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  
 		  long endTime = System.currentTimeMillis();
 		  long totalTime = endTime-startTime;
 		  
 		  scanner.close();
 		  executor.shutdown();
+		  
+		  
 		  
 		  System.out.println("Total time was:" + totalTime + " miliseconds");
 		  

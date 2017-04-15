@@ -12,6 +12,7 @@ public class MatrixCallable implements Callable<Double>{
 		this.column=column;
 		this.N=N;
 	}
+	
 	@Override
 	public Double call() throws Exception {
 		

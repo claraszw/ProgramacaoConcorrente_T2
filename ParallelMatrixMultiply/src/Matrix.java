@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
 
@@ -24,15 +25,6 @@ public class Matrix {
 		}
 	}
 	
-	public void printMatrix(){
-		for(int i=0;i<N;i++){
-			for(int j=0;j<N;j++){
-				System.out.print(content[i][j]+"  ");
-			}
-			System.out.println();
-		}
-	}
-	
 	public double[] getColumn(int j){
 		
 		double[] column= new double[N];
@@ -43,28 +35,26 @@ public class Matrix {
 		return column;
 		
 	}
-
 	
-//	public static void main(String args[]){
-//		Scanner file = null;
-//		try {
-//			file = new Scanner(new File("matrix.txt"));
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		int N = 5;
-//		
-//		Matrix M = new Matrix(N);
-//		M.fillMatrixFile(file);
-//		System.out.println("MATRIX 1");
-//		M.printMatrix();
-//		
-//		System.out.println("MATRIX 2");
-//		Matrix M2 = new Matrix(N);
-//		M2.fillMatrixFile(file);
-//		M2.printMatrix();
-//	}
+	public void printMatrix(){
+		for(int i=0;i<N;i++){
+			for(int j=0;j<N;j++){
+				System.out.print(content[i][j]+"  ");
+			}
+			System.out.println();
+		}
+	}
+	
+	
+	public void printMatrixFile(PrintWriter printer){
+		for(int i=0;i<N;i++){
+			for(int j=0;j<N;j++){
+				printer.print(content[i][j]+"  ");
+			}
+			printer.println();
+		}
+		
+		printer.close();
+	}
 	
 }
